@@ -1,7 +1,5 @@
-# Author: Ivan Bioli (https://github.com/IvanBioli)
-
 import Pkg
-# Pkg.activate("elementifinitiunipv_pkg") # Uncomment this line if you want to activate the package environment
+# Pkg.activate("elementifinitiunipv_pkg")
 using Revise
 using LinearAlgebra
 using SparseArrays
@@ -17,15 +15,32 @@ g0, g1 = u(0), u(1)          # Dirichlet boundary conditions u(0) = g0 and u(1) 
 
 # Function to solve the Poisson equation using finite differences
 function poisson1d(N, f, g_a, g_b)
-
-    ############### ADD CODE HERE ###############
-
+    h = 1 / N  # Mesh size
+    x = LinRange(0, 1, N+1)  # Grid points from 0 to 1 with N intervals
+    
+    # Construct the right-hand side vector b (excluding boundaries)
+    b = f.(x[2:end-1])  # Values of f(x) at internal points
+    b[1] += g_a / h^2   # Apply Dirichlet boundary condition at x=0
+    b[end] += g_b / h^2  # Apply Dirichlet boundary condition at x=1
+    
+    # Construct the sparse matrix A using spdiagm
+    A = (1 / h^2) * spdiagm(
+        -1 => -ones(N-2),  # Below diagonal
+        0 => 2 * ones(N-1), # Main diagonal
+        1 => -ones(N-2)     # Above diagonal
+    )
+    
+    # Solve the linear system A * u_h = b
+    uh_inner = A \ b       # Internal solution
+    uh = [g_a; uh_inner; g_b]  # Include boundary values
+    
+    return uh
 end
 
 # Function to compute the error between the exact and approximate solution
 function compute_error(u_exact, u_approx, x)
     # Compute the error in the infinity norm
-    error = ############### ADD CODE HERE ###############
+    error = maximum(abs.(u_exact.(x) .- u_approx))
     return error
 end
 
