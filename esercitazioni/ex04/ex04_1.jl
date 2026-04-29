@@ -1,19 +1,20 @@
 # Author: Ivan Bioli (https://github.com/IvanBioli)
 begin
     import Pkg
-    # Pkg.activate("elementifinitiunipv_pkg")
+    Pkg.activate("elementifinitiunipv_pkg")
     using Revise
 
     # Load the necessary files
-    includet("../../modules/Meshing.jl")
-    includet("../../modules/Quadrature_adv.jl")
-    includet("../../modules/Assembly.jl")
+    includet("../../modules/Meshing_mia.jl")
+    includet("../../modules/Quadrature_adv_mia.jl")
+    includet("../../modules/Assembly_mia.jl")
 end
 
 ################### CODE FOR SANITY CHECKS ###################
 # Common data
 begin
     h = 0.1
+
     out_file = mesh_circle(h)
     T, p = get_nodes_connectivity(out_file)
     msh = Mesh(T, p)
